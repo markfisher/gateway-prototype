@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.1.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<int:channel id="requestChannel"/>
+
+	<bean id="outboundGateway" class="org.springframework.integration.config.ConsumerEndpointFactoryBean">
+		<property name="inputChannelName" value="requestChannel"/>
+		<property name="handler">
+			<bean class="gateways.NonBlockingOutboundGateway">
+				<property name="scheduler" ref="scheduler"/>
+				<property name="outputChannel" ref="replyChannel"/>
+			</bean>
+		</property>
+	</bean>
+
+	<task:scheduler id="scheduler"/>
+
+	<int:logging-channel-adapter id="replyChannel" level="INFO" logger-name="results.logger"/>
+
+</beans>

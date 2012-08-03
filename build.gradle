@@ -1,0 +1,45 @@
+group = 'gateways'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin:'application'
+sourceCompatibility=1.6
+targetCompatibility=1.6
+
+repositories {
+    maven { url 'https://repo.springsource.org/libs-snapshot' }
+}
+
+dependencies {
+    compile "org.springframework.integration:spring-integration-core:2.2.0.BUILD-SNAPSHOT"
+    compile "org.slf4j:slf4j-log4j12:1.6.6"
+    compile "log4j:log4j:1.2.16"
+}
+
+task wrapper(type: Wrapper) {
+  description = 'Generates gradlew[.bat] scripts'
+  gradleVersion = '1.0'
+}
+
+task(blocking, dependsOn: 'classes', type: JavaExec) {
+  main = 'gateways.Launcher'
+  if (project.hasProperty('n')) {
+    args 'blocking', getProperty('n')
+  }
+  else {
+    args 'blocking', '100'
+  }
+  classpath = sourceSets.main.runtimeClasspath
+}
+
+task(nonblocking, dependsOn: 'classes', type: JavaExec) {
+  main = 'gateways.Launcher'
+  if (project.hasProperty('n')) {
+    args 'nonblocking', getProperty('n')
+  }
+  else {
+    args 'nonblocking', '100'
+  }
+  classpath = sourceSets.main.runtimeClasspath
+}
